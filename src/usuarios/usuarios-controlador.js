@@ -1,5 +1,6 @@
 const Usuario = require('./usuarios-modelo');
 const { InvalidArgumentError, InternalServerError } = require('../erros');
+const blocklist = require("../../redis/manipula-blocklist");
 
 const jwt = require("jsonwebtoken");
 
@@ -8,7 +9,7 @@ function criaTokenJWT(usuario) {
     id: usuario.id
   };
 
-  const token = jwt.sign(payload, process.env.CHAVE_JWT);
+  const token = jwt.sign(payload, process.env.CHAVE_JWT, { expiresIn: "15m" });
   return token;
 }
 
@@ -43,6 +44,16 @@ module.exports = {
     res.set("Authorization", token);
     
     res.status(204).send();
+  },
+
+  logout: async (req, res) => {
+    try {
+      const token = req.token;
+      await blocklist.adiciona(token);
+      res.status(204).json();
+    } catch(erro) {
+      res.status(500).json({ erro: erro.message });
+    }
   },
 
   lista: async (req, res) => {

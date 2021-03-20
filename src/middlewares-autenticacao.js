@@ -30,8 +30,10 @@ module.exports = {
             (erro, usuario, info) => {
 
                 if(erro) {
-                    if(erro.name === "JsonWebTokenErro")
+                    if(erro.name === "JsonWebTokenError")
                         return res.status(401).json({ erro: erro.message });
+                    else if(erro.name === "TokenExpiredError")
+                        return res.status(401).json({ erro: erro.message, expiradoEm: erro.expiredAt });
                     else
                         return res.status(500).json({ erro: erro.message });
                 }
@@ -40,6 +42,7 @@ module.exports = {
                     return res.status(401).json();
                 }
 
+                req.token = info.token;
                 req.user = usuario;
                 return next();
             }

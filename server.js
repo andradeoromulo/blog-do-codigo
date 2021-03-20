@@ -1,4 +1,5 @@
-require("dotenv").config()
+require("dotenv").config();
+require("./redis/blocklist");
 
 const app = require('./app');
 const port = 3000;
