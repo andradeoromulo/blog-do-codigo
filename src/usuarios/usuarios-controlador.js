@@ -1,6 +1,6 @@
 const Usuario = require('./usuarios-modelo');
 const { InvalidArgumentError, InternalServerError } = require('../erros');
-const blocklist = require("../../redis/manipula-blocklist");
+const blocklist = require("../../redis/blocklist-access-token");
 const allowlist = require("../../redis/allowlist-refresh-token");
 
 const jwt = require("jsonwebtoken");

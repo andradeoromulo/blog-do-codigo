@@ -3,7 +3,7 @@ const LocalStrategy = require("passport-local").Strategy;
 const BearerStrategy = require("passport-http-bearer").Strategy;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const blocklist = require("../redis/manipula-blocklist");
+const blocklist = require("../redis/blocklist-access-token");
 
 const Usuario = require("./usuarios/usuarios-modelo");
 const { InvalidArgumentError } = require("./erros");
