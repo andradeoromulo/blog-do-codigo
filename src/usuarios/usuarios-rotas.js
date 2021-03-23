@@ -1,5 +1,5 @@
 const usuariosControlador = require('./usuarios-controlador');
-const middlewaresAutenticacao = require("../middlewares-autenticacao");
+const middlewaresAutenticacao = require("..//autenticacao/middlewares-autenticacao");
 
 module.exports = app => {
   app
