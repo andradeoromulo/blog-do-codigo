@@ -1,5 +1,5 @@
 const usuariosControlador = require('./usuarios-controlador');
-const middlewaresAutenticacao = require("..//autenticacao/middlewares-autenticacao");
+const middlewaresAutenticacao = require("../autenticacao/middlewares-autenticacao");
 
 module.exports = app => {
   app
@@ -22,6 +22,13 @@ module.exports = app => {
       middlewaresAutenticacao.refresh,
       usuariosControlador.  login
     );
+
+  app
+    .route("/usuario/verificar-email/:tokenVerificacao")
+    .get(
+        middlewaresAutenticacao.verificacaoEmail,
+        usuariosControlador.verificaEmail
+      );      
 
   app
     .route('/usuario')

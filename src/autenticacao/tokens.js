@@ -14,6 +14,9 @@ function criaTokenJWT(id, [tempoQuantidade, tempoUnidade]) {
 }
 
 async function verificaTokenNaBlocklist(token, nome, blocklist) {
+    if(!blocklist)
+        return;
+
     const tokenInvalido = await blocklist.contemToken(token);
 
     if(tokenInvalido)
@@ -82,6 +85,16 @@ module.exports = {
         },
         invalida(token) {
             return invalidaTokenOpaco(token, this.lista);
+        }
+    },
+    verificacaoEmail: {
+        nome: "Token de verificação de e-mail",
+        expiracao: [1, "h"],
+        cria(id) {
+            return criaTokenJWT(id, this.expiracao);
+        }, 
+        verifica(token) {
+            return verificaTokenJWT(token, this.nome);
         }
     }
 }
