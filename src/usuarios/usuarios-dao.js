@@ -15,10 +15,11 @@ module.exports = {
             nome,
             email,
             senhaHash,
-            emailVerificado
-          ) VALUES (?, ?, ?, ?)
+            emailVerificado,
+            cargo
+          ) VALUES (?, ?, ?, ?, ?)
         `,
-        [usuario.nome, usuario.email, usuario.senhaHash, usuario.emailVerificado]
+        [usuario.nome, usuario.email, usuario.senhaHash, usuario.emailVerificado, usuario.cargo]
       );
     } catch(erro) {
       throw new InternalServerError('Erro ao adicionar o usuário');

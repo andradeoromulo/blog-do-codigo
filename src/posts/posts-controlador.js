@@ -26,5 +26,25 @@ module.exports = {
     } catch (erro) {
       return res.status(500).json({ erro: erro });
     }
+  },
+
+  async obtemDetalhes (req, res) {
+    try {
+      const post = await Post.buscaPorId(req.params.id, req.user.id);
+      res.json(post);
+    } catch (erro) {
+      return res.status(500).json({ erro: erro.message });
+    }
+  },
+
+  async remove (req, res) {
+    try {
+      const post = await Post.buscaPorId(req.params.id, req.user.id);
+      post.remove();
+      res.status(204);
+      res.end();
+    } catch (erro) {
+      return res.status(500).json({ erro: erro.message });
+    }
   }
 };

@@ -10,6 +10,7 @@ class Usuario {
     this.email = usuario.email;
     this.senhaHash = usuario.senhaHash;
     this.emailVerificado = usuario.emailVerificado;  
+    this.cargo = usuario.cargo;
 
     this.valida();
   }
@@ -40,6 +41,10 @@ class Usuario {
   async verificaEmail() {
     this.emailVerificado = true;
     await usuariosDao.verificaEmail(this, this.emailVerificado); 
+    
+    const cargosValidos = ["admin", "editor", "assinante"];
+    if(cargosValidos.indexOf(this.cargo) === -1) 
+      throw new InvalidArgumentError("O campo cargo está inválido");
   }
 
   
