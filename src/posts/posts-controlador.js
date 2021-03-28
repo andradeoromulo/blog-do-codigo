@@ -21,10 +21,15 @@ module.exports = {
 
   async lista(req, res) {
     try {
-      const posts = await Post.lista();
+      let posts = await Post.listaTodos();
+
+      if(!req.estaAutenticado) {
+        posts = posts.map(post => ({ titulo: post.titulo, conteudo: post.conteudo }));
+      }
+
       res.send(posts);
     } catch (erro) {
-      return res.status(500).json({ erro: erro });
+      return res.status(500).json({ erro: erro.message });
     }
   },
 
@@ -39,10 +44,17 @@ module.exports = {
 
   async remove (req, res) {
     try {
-      const post = await Post.buscaPorId(req.params.id, req.user.id);
+      let post;
+
+      if(req.acesso.universal.concedido) 
+        post = await Post.buscaPorId(req.params.id);
+      else if(req.acesso.restrito.concedido)
+        post = await Post.buscaPorIdAutor(req.params.id, req.user.id);
+
       post.remove();
-      res.status(204);
-      res.end();
+
+      res.status(204).end();
+      
     } catch (erro) {
       return res.status(500).json({ erro: erro.message });
     }
