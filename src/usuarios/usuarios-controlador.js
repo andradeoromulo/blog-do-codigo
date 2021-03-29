@@ -10,7 +10,7 @@ function geraEndereco(rota, token) {
 }
 
 module.exports = {
-  async adiciona(req, res) {
+  async adiciona(req, res, next) {
     const { nome, email, senha, cargo } = req.body;
 
     try {
@@ -32,10 +32,7 @@ module.exports = {
       res.status(201).json();
 
     } catch (erro) {
-      if (erro instanceof InvalidArgumentError) 
-        res.status(400).json({ erro: erro.message });
-      
-      res.status(500).json({ erro: erro.message });
+      next(erro);
     }
   },
 
@@ -47,13 +44,13 @@ module.exports = {
     res.status(200).json({ refreshToken });
   },
 
-  async logout(req, res) {
+  async logout(req, res, next) {
     try {
       const token = req.token;
       await tokens.access.invalida(token);
       res.status(204).json();
     } catch(erro) {
-      res.status(500).json({ erro: erro.message });
+      next(erro);
     }
   },
 
@@ -62,23 +59,23 @@ module.exports = {
     res.json(usuarios);
   },
 
-  async verificaEmail(req, res) {
+  async verificaEmail(req, res, next) {
     try {
       const usuario = req.user;
       await usuario.verificaEmail();
       res.status(204).json();
     } catch(erro) {
-      res.status(500).json({ erro: erro.message });
+      next(erro);
     }
   },
 
-  async deleta(req, res) {
+  async deleta(req, res, next) {
     const usuario = await Usuario.buscaPorId(req.params.id);
     try {
       await usuario.deleta();
       res.status(200).send();
     } catch (erro) {
-      res.status(500).json({ erro: erro });
+      next(erro);
     }
   }
 };

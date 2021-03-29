@@ -9,12 +9,8 @@ module.exports = {
             { session: false },
             (erro, usuario, info) => {
                 
-                if(erro) {
-                    if(erro.name === "InvalidArgumentError") 
-                        return res.status(401).json({ erro: erro.message });
-                    else 
-                        return res.status(500).json({ erro: erro.message });
-                }
+                if(erro)
+                    return next(erro);
 
                 if(!usuario) {
                     return res.status(401).json();
@@ -33,12 +29,7 @@ module.exports = {
             (erro, usuario, info) => {
 
                 if(erro) {
-                    if(erro.name === "JsonWebTokenError")
-                        return res.status(401).json({ erro: erro.message });
-                    else if(erro.name === "TokenExpiredError")
-                        return res.status(401).json({ erro: erro.message, expiradoEm: erro.expiredAt });
-                    else
-                        return res.status(500).json({ erro: erro.message });
+                    return next(erro);
                 }
 
                 if(!usuario) {
@@ -60,10 +51,7 @@ module.exports = {
             req.user = await Usuario.buscaPorId(usuarioId);
             return next();
         } catch(erro) {
-            if(erro.name === "InvalidArgumentError")
-                return res.status(401).json({ erro: erro.message });
-            
-            return res.status(500).json({ erro: erro.message });
+            return next(erro);
         }
     },
     async verificacaoEmail(req, res, next) {
@@ -74,12 +62,7 @@ module.exports = {
             req.user = usuario;
             next();
         } catch(erro) {
-            if(erro.name === "JsonWebTokenError") 
-                return res.status(401).json({ erro: erro.message });
-            else if(erro.name === "TokenExpiredError")
-                return res.status(401).json({ erro: erro.message, expiradoEm: erro.expiredAt });
-
-            return res.status(500).json({ erro: erro.message });
+            return next(erro);
 
         }
     }
