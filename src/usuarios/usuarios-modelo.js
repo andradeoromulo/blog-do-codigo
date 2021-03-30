@@ -55,7 +55,7 @@ class Usuario {
   static async buscaPorId(id) {
     const usuario = await usuariosDao.buscaPorId(id);
     if (!usuario) {
-      throw new NotFound("usuário");
+      return null;
     }
     
     return new Usuario(usuario);
@@ -64,7 +64,7 @@ class Usuario {
   static async buscaPorEmail(email) {
     const usuario = await usuariosDao.buscaPorEmail(email);
     if (!usuario) {
-      throw new NotFound("usuário");
+      return null;
     }
     
     return new Usuario(usuario);

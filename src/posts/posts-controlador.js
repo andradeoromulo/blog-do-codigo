@@ -1,9 +1,11 @@
 const Post = require('./posts-modelo');
-const { InvalidArgumentError, InternalServerError } = require('../erros');
+const ConversorPost = require("../conversores");
+const { NotFound } = require('../erros');
 
 module.exports = {
   async adiciona(req, res, next) {
     try {
+      req.body.autor = req.user.id;
       const post = new Post(req.body);
       await post.adiciona();
       
@@ -17,8 +19,15 @@ module.exports = {
     try {
       let posts = await Post.listaTodos();
 
+      const conversor = new ConversorPost("json");
+
       if(!req.estaAutenticado) {
-        posts = posts.map(post => ({ titulo: post.titulo, conteudo: post.conteudo }));
+        posts = posts.map(post => {
+          post.conteudo = post.conteudo.substr(0, 10) + 
+            "... Você precisa assinar o blog para ler o restante do post";
+          return post;
+        });
+        posts = conversor.converter(posts);
       }
 
       res.send(posts);
@@ -29,7 +38,10 @@ module.exports = {
 
   async obtemDetalhes (req, res, next) {
     try {
-      const post = await Post.buscaPorId(req.params.id, req.user.id);
+      const post = await Post.buscaPorIdAutor(req.params.id, req.user.id);
+      if(!post) {
+        throw new NotFound("post");
+      }
       res.json(post);
     } catch (erro) {
       next(erro);

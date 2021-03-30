@@ -5,11 +5,23 @@ const port = 3000;
 const db = require('./database');
 require("./redis/blocklist-access-token");
 require("./redis/allowlist-refresh-token");
+
+const routes = require('./rotas');
 const { InvalidArgumentError, NotFound, NotAuthorized } = require("./src/erros");
 const jwt = require("jsonwebtoken");
 
-const routes = require('./rotas');
-const { InvalidArgumentError } = require("./src/erros");
+app.use((req, res, next) => {
+    const accept = req.header("accept");
+
+    if(accept.indexOf("application/json") === -1 && accept.indexOf("*/*") === -1) {
+        res.status(406).end();
+        return;
+    }
+
+    res.set({ "Content-Type": "application/json" });
+    next();
+});
+
 routes(app);
 
 app.use((error, req, res, next) => {
@@ -18,16 +30,16 @@ app.use((error, req, res, next) => {
         erro: error.message
     };
 
-    if(erro instanceof InvalidArgumentError)
+    if(error instanceof InvalidArgumentError)
         status = 400;
-    else if(erro instanceof jwt.JsonWebTokenError)
+    else if(error instanceof jwt.JsonWebTokenError)
         status = 401;
-    else if(erro instanceof jwt.TokenExpiredError) {
+    else if(error instanceof jwt.TokenExpiredError) {
         status = 401;
-        body.expiradoEm = erro.expiredAt;
-    } else if(erro instanceof NotFound)
+        body.expiradoEm = error.expiredAt;
+    } else if(error instanceof NotFound)
         status = 404;
-    else if(erro instanceof NotAuthorized)
+    else if(error instanceof NotAuthorized)
         status = 401;
 
     res.status(status).json(body);

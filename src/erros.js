@@ -14,16 +14,14 @@ class InternalServerError extends Error {
 
 class NotFound extends Error {
   constructor(entidade) {
-    this.mensagem = `Não foi possível encontrar ${entidade}`;
-    super(mensagem);
+    super(`Não foi possível encontrar ${entidade}`);
     this.name = "NotFound";
   }
 }
 
 class NotAuthorized extends Error {
   constructor() {
-    this.mensagem = "Não foi possível acessa este recurso";
-    super(mensagem);
+    super("Não foi possível acessa este recurso");
     this.name = "NotAuthorized";
   }
 }

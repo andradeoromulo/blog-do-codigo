@@ -31,11 +31,11 @@ module.exports = (entidade, acao) => (req, res, next) => {
     req.acesso = {
         universal: {
             permissoes: permissoesUniversais.attributes,
-            concedidas: permissoesUniversais.granted
+            concedido: permissoesUniversais.granted
         },
         restrito: {
             permissoes: permissoesRestritas.attributes,
-            concedidas: permissoesRestritas.granted
+            concedido: permissoesRestritas.granted
         }
     };
 

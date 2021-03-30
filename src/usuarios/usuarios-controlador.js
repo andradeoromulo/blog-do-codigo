@@ -1,5 +1,5 @@
 const Usuario = require('./usuarios-modelo');
-const { InvalidArgumentError } = require('../erros');
+const { NotFound } = require('../erros');
 const tokens = require("../autenticacao/tokens");
 const { EmailVerificacao } = require("./emails");
 const { verificaEmail } = require('./usuarios-dao');
@@ -72,6 +72,9 @@ module.exports = {
   async deleta(req, res, next) {
     const usuario = await Usuario.buscaPorId(req.params.id);
     try {
+      if (!usuario) {
+        throw new NotFound("usuário");
+      }
       await usuario.deleta();
       res.status(200).send();
     } catch (erro) {
