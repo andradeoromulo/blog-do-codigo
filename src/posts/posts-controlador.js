@@ -1,5 +1,5 @@
 const Post = require('./posts-modelo');
-const ConversorPost = require("../conversores");
+const { ConversorPost } = require("../conversores");
 const { NotFound } = require('../erros');
 
 module.exports = {
@@ -19,7 +19,7 @@ module.exports = {
     try {
       let posts = await Post.listaTodos();
 
-      const conversor = new ConversorPost("json");
+      let conversor;
 
       if(!req.estaAutenticado) {
         posts = posts.map(post => {
@@ -27,10 +27,15 @@ module.exports = {
             "... Você precisa assinar o blog para ler o restante do post";
           return post;
         });
-        posts = conversor.converter(posts);
+        conversor = new ConversorPost("json");
+      } else {
+        conversor = new ConversorPost(
+          "json",
+          req.acesso.universal.concedido ? req.acesso.universal.permissoes : req.acesso.restrito.permissoes
+        );
       }
 
-      res.send(posts);
+      res.send(conversor.converter(posts));
     } catch (erro) {
       next(erro);
     }

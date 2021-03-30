@@ -9,6 +9,7 @@ require("./redis/allowlist-refresh-token");
 const routes = require('./rotas');
 const { InvalidArgumentError, NotFound, NotAuthorized } = require("./src/erros");
 const jwt = require("jsonwebtoken");
+const { ConversorErro } = require("./src/conversores");
 
 app.use((req, res, next) => {
     const accept = req.header("accept");
@@ -42,7 +43,9 @@ app.use((error, req, res, next) => {
     else if(error instanceof NotAuthorized)
         status = 401;
 
-    res.status(status).json(body);
+    const conversor = new ConversorErro("json");
+
+    res.status(status).send(conversor.converter(body));
 });
 
 app.listen(port, () => console.log(`App listening on port ${port}`));

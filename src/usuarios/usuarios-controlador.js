@@ -3,6 +3,7 @@ const { NotFound } = require('../erros');
 const tokens = require("../autenticacao/tokens");
 const { EmailVerificacao } = require("./emails");
 const { verificaEmail } = require('./usuarios-dao');
+const { ConversorUsuario } = require("../conversores");
 
 function geraEndereco(rota, token) {
   const baseURL = process.env.BASE_URL;
@@ -56,7 +57,13 @@ module.exports = {
 
   async lista(req, res) {
     const usuarios = await Usuario.lista();
-    res.json(usuarios);
+
+    const conversor = new ConversorUsuario(
+      "json",
+      req.acesso.universal.concedido ? req.acesso.universal.permissoes : req.acesso.restrito.permissoes
+    );
+
+    res.send(conversor.converter(usuarios));
   },
 
   async verificaEmail(req, res, next) {
