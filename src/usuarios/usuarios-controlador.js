@@ -1,7 +1,7 @@
 const Usuario = require('./usuarios-modelo');
-const { NotFound } = require('../erros');
+const { NotFound, InvalidArgumentError } = require('../erros');
 const tokens = require("../autenticacao/tokens");
-const { EmailVerificacao } = require("./emails");
+const { EmailVerificacao, EmailRedefinicaoSenha } = require("./emails");
 const { verificaEmail } = require('./usuarios-dao');
 const { ConversorUsuario } = require("../conversores");
 
@@ -71,6 +71,49 @@ module.exports = {
       const usuario = req.user;
       await usuario.verificaEmail();
       res.status(204).json();
+    } catch(erro) {
+      next(erro);
+    }
+  },
+
+  async esqueciMinhaSenha(req, res, next) {
+
+    const respostaPadrao = { mensagem: "As instruções de redefinição de senha serão enviadas para o e-mail assim que o usuário for localizado." };
+
+    try {
+      const email = req.body.email;
+      const usuario = await Usuario.buscaPorEmail(email);
+
+      if(!usuario) {
+        res.send(respostaPadrao);
+        return;
+      }
+
+      const token = await tokens.redefinicaoDeSenha.cria(usuario.id);
+      const emailRedefinicaoSenha = new EmailRedefinicaoSenha(usuario, token);
+      emailRedefinicaoSenha.enviaEmail().catch(console.log);
+
+      res.send(respostaPadrao);
+
+    } catch(erro) {
+      next(erro);
+    }
+  },
+
+  async trocaSenha(req, res, next) {
+    try {
+      const token = req.body.token;
+
+      if(typeof token !== "string" || token === 0)
+        throw new InvalidArgumentError("O token está inválido");
+
+      const id = await tokens.redefinicaoDeSenha.verifica(token);
+      const usuario = await Usuario.buscaPorId(id);
+      await usuario.adicionaSenha(req.body.senha);
+      await usuario.atualizaSenha();
+
+      res.send({ mensagem: "Senha atualizada com sucesso" });
+
     } catch(erro) {
       next(erro);
     }

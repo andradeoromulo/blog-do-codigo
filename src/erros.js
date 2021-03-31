@@ -21,7 +21,7 @@ class NotFound extends Error {
 
 class NotAuthorized extends Error {
   constructor() {
-    super("Não foi possível acessa este recurso");
+    super("Não foi possível acessar este recurso");
     this.name = "NotAuthorized";
   }
 }

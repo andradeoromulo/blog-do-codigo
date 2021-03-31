@@ -3,6 +3,7 @@ const crypto = require("crypto");
 const moment = require("moment");
 const allowlistRefreshToken = require("../../redis/allowlist-refresh-token");
 const blocklistAccessToken = require("../../redis/blocklist-access-token");
+const listaRedefinicao = require("../../redis/list-token-redefinicao");
 const { InvalidArgumentError } = require("../erros");
 
 
@@ -95,6 +96,17 @@ module.exports = {
         }, 
         verifica(token) {
             return verificaTokenJWT(token, this.nome);
+        }
+    },
+    redefinicaoDeSenha: {
+        nome: "Token de redefinição de senha",
+        expiracao: [1, 'h'],
+        lista: listaRedefinicao,
+        cria(id) {
+            return criaTokenOpaco(id, this.expiracao, this.lista)
+        },
+        verifica(token) {
+            return verificaTokenOpaco(token, this.nome, this.lista);
         }
     }
 }

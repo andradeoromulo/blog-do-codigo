@@ -70,7 +70,7 @@ module.exports = {
 
   async verificaEmail(usuario, emailVerificado) {
     try{
-      await db.run(
+      await asyncRun(
         `
           UPDATE usuarios SET emailVerificado = ? WHERE id = ?
         `,
@@ -78,6 +78,17 @@ module.exports = {
       );
     } catch(erro) {
       throw new InternalServerError('Erro ao realizar a verificação de e-mail');
+    }
+  },
+
+  async atualizaSenha(senha, id) {
+    try {
+      await asyncRun(
+        'UPDATE usuarios SET senhaHash = ? WHERE id = ?',
+        [senha, id]
+      );
+    } catch(erro) {
+      throw new InternalServerError("Erro ao atualizar a senha");
     }
   },
 
