@@ -3,7 +3,7 @@ const { createHash } = require("crypto");
 const redis = require("redis");
 const manipulaLista = require("./manipula-lista");
 
-const blocklist = redis.createClient({ prefix: "blocklist-access-token" });
+const blocklist = redis.createClient({ host: "redis", prefix: "blocklist-access-token" });
 const manipulaBlocklist = manipulaLista(blocklist);
 
 function geraTokenHash(token) {

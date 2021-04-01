@@ -1,0 +1,27 @@
+version: '3'
+
+networks:
+  blogdocodigo-network:
+    driver: bridge
+
+services:
+
+  blogdocodigo:
+    build:
+      dockerfile: ./docker/blog-do-codigo.dockerfile
+      context: .
+    image: romulo/blogdocodigo
+    container_name: blogdocodigo
+    ports:
+      - "3000:3000"
+    networks:
+      - blogdocodigo-network
+    depends_on: 
+      - "redis"
+    
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - blogdocodigo-network
