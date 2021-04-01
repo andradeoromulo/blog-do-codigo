@@ -11,6 +11,8 @@ $ npm start
 ```
 Depois, basta consumir usar a [collection no Postman](https://www.getpostman.com/collections/3ca2e8a1606ec539c6df) para consumir a API.
 
+Caso queira subir o redis e a aplicação de uma só vez por containers, basta ir mudar para a branch `container`.
+
 ## Tecnologias
 Um pouco do que foi usado nesse projeto:
 * `bcrypt` para gerar hashes utilizadas para armazenar senhas e chaves.
@@ -20,3 +22,4 @@ Um pouco do que foi usado nesse projeto:
 * `redis` para armazenar uma blocklist de tokens.
 * `sqlite` para armazenar o restante dos dados, como usuários e posts.
 * `nodemailer` para verificação de e-mail.
+* `accesscontrol` para controle de acesso com base em cargos.
